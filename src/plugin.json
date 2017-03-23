@@ -1,7 +1,7 @@
 {
     "type": "panel",
     "name": "Datatable Panel",
-    "id": "abmptit-datatable-panel",
+    "id": "ts-datatable-panel",
     "info": {
         "description": "Datatable panel for Grafana",
         "author": {
@@ -10,8 +10,8 @@
         },
         "keywords": ["table", "panel"],
         "logos": {
-            "small": "img/kapalakLogo.png",
-            "large": "img/kapalakLogo.png"
+            "small": "img/KapalakLogo32b.png",
+            "large": "img/KapalakLogo32b.png"
         },
         "links": [{
             "name": "Project site",

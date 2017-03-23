@@ -111,7 +111,7 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
             }
             if (style.type === 'url') {
               return function (v) {
-                return v.link();
+                return v.link(v);
               };
             }
             if (style.type === 'hidden') {

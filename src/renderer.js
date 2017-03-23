@@ -76,7 +76,7 @@ export class DatatableRenderer {
     }
     if (style.type === 'url') {
       return function (v) {
-        return v.link();
+        return v.link(v);
       };
     }
     if (style.type === 'hidden') {

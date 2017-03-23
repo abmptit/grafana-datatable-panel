@@ -1,17 +1,17 @@
 {
     "type": "panel",
     "name": "Datatable Panel",
-    "id": "abmptit-datatable-panel",
+    "id": "ts-datatable-panel",
     "info": {
         "description": "Datatable panel for Grafana",
         "author": {
-            "name": "Brian Gann (bkgann@gmail.com)",
+            "name": "Aymen BEN MILED (benmiledaymen@gmail.com)",
             "url": "https://github.com/abmptit"
         },
         "keywords": ["table", "panel"],
         "logos": {
-            "small": "img/nav-dt.png",
-            "large": "img/nav-dt.png"
+            "small": "img/KapalakLogo32b.png",
+            "large": "img/KapalakLogo32b.png"
         },
         "links": [{
             "name": "Project site",

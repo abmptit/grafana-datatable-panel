@@ -45,8 +45,6 @@
 				</div>
 				<gf-form-switch class="gf-form" label-class="width-8" ng-if="style.type === 'string'" label="Sanitize HTML" checked="style.sanitize" change="ctrl.render()"></gf-form-switch>
 				<div class="gf-form" label-class="width-8" ng-if="style.type === 'url'" change="ctrl.render()">
-					<label class="gf-form-label">Root</label>
-					<input type="text" class="gf-form-input width-4" data-placement="right" ng-model="style.root" ng-change="ctrl.render()" ng-model-onblur>
 				</div>
 				<div class="gf-form gf-form--grow">
 					<div class="gf-form-label gf-form-label--grow"></div>
