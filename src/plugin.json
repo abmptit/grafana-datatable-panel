@@ -5,13 +5,13 @@
     "info": {
         "description": "Datatable panel for Grafana",
         "author": {
-            "name": "Brian Gann (bkgann@gmail.com)",
+            "name": "Aymen BEN MILED (benmiledaymen@gmail.com)",
             "url": "https://github.com/abmptit"
         },
         "keywords": ["table", "panel"],
         "logos": {
-            "small": "img/nav-dt.png",
-            "large": "img/nav-dt.png"
+            "small": "img/kapalakLogo.png",
+            "large": "img/kapalakLogo.png"
         },
         "links": [{
             "name": "Project site",
@@ -45,7 +45,7 @@
             "name": "Thresholding with Value Coloring",
             "path": "screenshots/datatable-threshold-value.png"
         }],
-        "version": "0.0.1",
+        "version": "0.0.2",
         "updated": "2017-03-23"
     },
 

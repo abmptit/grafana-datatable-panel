@@ -162,5 +162,6 @@ This panel is based on the "Table" panel by GrafanaLabs
 #### Changelog
 
 
-##### v0.0.1
+##### v0.0.2
+- Add Url string format
 - Initial commit
