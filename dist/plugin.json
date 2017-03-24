@@ -10,8 +10,8 @@
         },
         "keywords": ["table", "panel"],
         "logos": {
-            "small": "img/KapalakLogo32b.png",
-            "large": "img/KapalakLogo32b.png"
+            "small": "img/KapalakLogo32.png",
+            "large": "img/KapalakLogo32.png"
         },
         "links": [{
             "name": "Project site",
