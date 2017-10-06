@@ -97,6 +97,8 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
             }
             if (style && style.sanitize) {
               return this.sanitize(v);
+            } else if (style && style.link) {
+              return '<a href="' + v + '" target="_blank">' + v + '</a>';
             } else {
               return _.escape(v);
             }
@@ -251,9 +253,52 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
             };
           }
         }, {
+          key: 'getColumnAlias',
+          value: function getColumnAlias(columnName) {
+            // default to the columnName
+            var columnAlias = columnName;
+            if (this.panel.columnAliases !== undefined) {
+              for (var i = 0; i < this.panel.columnAliases.length; i++) {
+                if (this.panel.columnAliases[i].name === columnName) {
+                  columnAlias = this.panel.columnAliases[i].alias;
+                  break;
+                }
+              }
+            }
+            return columnAlias;
+          }
+        }, {
+          key: 'getColumnWidthHint',
+          value: function getColumnWidthHint(columnName) {
+            // default to the columnName
+            var columnWidth = '';
+            if (this.panel.columnWidthHints !== undefined) {
+              for (var i = 0; i < this.panel.columnWidthHints.length; i++) {
+                if (this.panel.columnWidthHints[i].name === columnName) {
+                  columnWidth = this.panel.columnWidthHints[i].width;
+                  break;
+                }
+              }
+            }
+            return columnWidth;
+          }
+        }, {
           key: 'render',
           value: function render() {
-            if (this.table.columns.length === 0) return;
+            var tableHolderId = '#datatable-panel-table-' + this.panel.id;
+            try {
+              if ($.fn.dataTable.isDataTable(tableHolderId)) {
+                var aDT = $(tableHolderId).DataTable();
+                aDT.destroy();
+                $(tableHolderId).empty();
+              }
+            } catch (err) {
+              console.log("Exception: " + err.message);
+            }
+
+            if (this.panel.emptyData) {
+              return;
+            }
             var columns = [];
             var columnDefs = [];
             var _this = this;
@@ -272,10 +317,15 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
               });
             }
             for (var i = 0; i < this.table.columns.length; i++) {
+              var columnAlias = this.getColumnAlias(this.table.columns[i].text);
+              var columnWidthHint = this.getColumnWidthHint(this.table.columns[i].text);
+              // NOTE: the width below is a "hint" and will be overridden as needed, this lets most tables show timestamps
+              // with full width
               /* jshint loopfunc: true */
               columns.push({
-                title: this.table.columns[i].text,
-                type: this.table.columns[i].type
+                title: columnAlias,
+                type: this.table.columns[i].type,
+                width: columnWidthHint
               });
               columnDefs.push({
                 "targets": i + rowNumberOffset,
@@ -389,8 +439,8 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
                 should_destroy = true;
               }
               if (should_destroy) {
-                var aDT = $('#datatable-panel-table-' + this.panel.id).DataTable();
-                aDT.destroy();
+                var destroyedDT = $('#datatable-panel-table-' + this.panel.id).DataTable();
+                destroyedDT.destroy();
                 $('#datatable-panel-table-' + this.panel.id).empty();
               }
             } catch (err) {
@@ -412,11 +462,11 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
               // shift the data to the right
             }
             var panelHeight = this.panel.panelHeight;
-            var orderSetting = [[0, 'desc']];
-            if (this.panel.rowNumbersEnabled) {
-              // when row numbers are enabled, show them ascending
-              orderSetting = [[0, 'asc']];
-            }
+            var orderSetting = this.panel.sortByColumnsData;
+            //if (this.panel.rowNumbersEnabled) {
+            //  // when row numbers are enabled, show them ascending
+            //  orderSetting = [[0, 'asc']];
+            //}
 
             var tableOptions = {
               "lengthMenu": [[5, 10, 25, 50, 75, 100, -1], [5, 10, 25, 50, 75, 100, "All"]],
@@ -424,14 +474,20 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
               info: this.panel.infoEnabled,
               lengthChange: this.panel.lengthChangeEnabled,
               scrollCollapse: false,
-              saveState: true,
+              scrollX: true,
+              stateSave: true,
+              dom: 'Bfrtip',
+              buttons: ['copy', 'excel', 'csv', 'pdf', 'print'],
+              select: {
+                style: 'os'
+              },
               data: formattedData,
               columns: columns,
               columnDefs: columnDefs,
               "search": {
                 "regex": true
               },
-              "order": orderSetting
+              order: orderSetting
             };
             if (this.panel.scroll) {
               tableOptions.paging = false;
@@ -440,7 +496,8 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
               tableOptions.paging = true;
               tableOptions.pagingType = this.panel.datatablePagingType;
             }
-            var newDT = $('#datatable-panel-table-' + this.panel.id).DataTable(tableOptions);
+            var $datatable = $(tableHolderId);
+            var newDT = $datatable.DataTable(tableOptions);
 
             // hide columns that are marked hidden
             for (var _i = 0; _i < this.table.columns.length; _i++) {
@@ -451,24 +508,24 @@ System.register(['jquery', 'app/core/utils/kbn', 'moment', './libs/datatables.ne
 
             // enable compact mode
             if (this.panel.compactRowsEnabled) {
-              $('#datatable-panel-table-' + this.panel.id).addClass('compact');
+              $datatable.addClass('compact');
             }
             // enable striped mode
             if (this.panel.stripedRowsEnabled) {
-              $('#datatable-panel-table-' + this.panel.id).addClass('stripe');
+              $datatable.addClass('stripe');
             }
             if (this.panel.hoverEnabled) {
-              $('#datatable-panel-table-' + this.panel.id).addClass('hover');
+              $datatable.addClass('hover');
             }
             if (this.panel.orderColumnEnabled) {
-              $('#datatable-panel-table-' + this.panel.id).addClass('order-column');
+              $datatable.addClass('order-column');
             }
             // these two are mutually exclusive
             if (this.panel.showCellBorders) {
-              $('#datatable-panel-table-' + this.panel.id).addClass('cell-border');
+              $datatable.addClass('cell-border');
             } else {
               if (this.panel.showRowBorders) {
-                $('#datatable-panel-table-' + this.panel.id).addClass('row-border');
+                $datatable.addClass('row-border');
               }
             }
             if (!this.panel.scroll) {
